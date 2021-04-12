@@ -15,7 +15,7 @@ import jakarta.ws.rs.core.MediaType;
 import tp1.api.User;
 
 @Path(RestUsers.PATH)
-public interface RestUsers {
+public interface RestUsers { //ds
 
 	static final String PATH="/users";
 
