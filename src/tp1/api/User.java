@@ -1,7 +1,7 @@
 package tp1.api;
 
 /**
- * Represents a User in the system
+ * Represents a User in the system. etc
  */
 public class User {
 	private String email;
