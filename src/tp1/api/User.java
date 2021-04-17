@@ -100,6 +100,10 @@ public class User {
 		return "User [email=" + email + ", userId=" + userId + ", fullName=" + fullName + ", password=" + password
 				+ "]";
 	}
+
+	public String getDomain() {
+		return userId.split("@")[1];
+	}
 	
 	
 }

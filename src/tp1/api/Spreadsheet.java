@@ -135,5 +135,9 @@ public class Spreadsheet {
 	 */
 	public String getCellRawValue(int row, int col) {
 		return rawValues[row][col];
-	}	
+	}
+
+	public String getOwnerDomain() {
+		return owner.split("@")[1];
+	}
 }

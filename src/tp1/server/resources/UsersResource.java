@@ -29,7 +29,7 @@ public class UsersResource implements RestUsers {
 
 		// Check if user is valid, if not return HTTP CONFLICT (409)
 		if(user.getUserId() == null || user.getPassword() == null || user.getFullName() == null || 
-				user.getEmail() == null) {
+				user.getEmail() == null || !user.getUserId().contains("@")) {
 			Log.info("User object invalid.");
 			throw new WebApplicationException( Status.CONFLICT );
 		}
