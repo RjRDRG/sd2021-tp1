@@ -1,10 +1,11 @@
 package tp1.server.resources;
 
 import jakarta.inject.Singleton;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
 import tp1.api.User;
 import tp1.api.service.rest.RestUsers;
+import tp1.api.service.soap.SoapUsers;
+import tp1.server.WebServiceType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,39 +14,51 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import static tp1.util.ExceptionMapper.*;
+
+/*
+@WebService(
+		serviceName = SoapUsers.NAME,
+		targetNamespace = SoapUsers.NAMESPACE,
+		endpointInterface = SoapUsers.INTERFACE
+)*/
 @Singleton
-public class UsersResource implements RestUsers {
+public class UsersResource implements RestUsers, SoapUsers {
+
+	private String domainId;
+	private WebServiceType type;
 
 	private final Map<String, User> users = new HashMap<>();
 
 	private static Logger Log = Logger.getLogger(UsersResource.class.getName());
 
-	public UsersResource() {
+	public UsersResource(String domainId, WebServiceType type) {
+		this.domainId = domainId;
+		this.type = type;
+
+		System.out.println(domainId);
 	}
 
 	@Override
 	public String createUser(User user) {
 		Log.info("createUser : " + user);
 
-		// Check if user is valid, if not return HTTP CONFLICT (409)
 		if(user.getUserId() == null || user.getPassword() == null || user.getFullName() == null || 
-				user.getEmail() == null || !user.getUserId().contains("@")) {
-			Log.info("User object invalid.");
-			throw new WebApplicationException( Status.CONFLICT );
+				user.getEmail() == null) {
+			throwWebAppException(Log, "User object invalid.", type, Status.BAD_REQUEST );
 		}
 
 		synchronized ( this ) {
 
-			// Check if userId does not exist exists, if not return HTTP CONFLICT (409)
-			if( users.containsKey(user.getUserId())) {
-				Log.info("User already exists.");
-				throw new WebApplicationException( Status.CONFLICT );
+			String userId = user.getUserId() + "@" + domainId;
+
+			if(users.containsKey(userId)) {
+				throwWebAppException(Log, "User already exists.", type, Status.CONFLICT);
 			}
 
-			//Add the user to the map of users
-			users.put(user.getUserId(), user);
+			users.put(userId, user);
 
-			return user.getUserId();
+			return userId;
 		}
 	}
 
@@ -54,24 +67,18 @@ public class UsersResource implements RestUsers {
 	public User getUser(String userId, String password) {
 		Log.info("getUser : user = " + userId + "; pwd = " + password);
 
-		// Check if user is valid, if not return HTTP CONFLICT (409)
 		if(userId == null || password == null) {
-			Log.info("UserId or passwrod null.");
-			throw new WebApplicationException( Status.CONFLICT );
+			throwWebAppException(Log, "UserId or passwrod null.", type, Status.BAD_REQUEST);
 		}
 
 		User user = users.get(userId);
 
-		// Check if user exists 
 		if( user == null ) {
-			Log.info("User does not exist.");
-			throw new WebApplicationException( Status.NOT_FOUND );
+			throwWebAppException(Log, "User does not exist.", type, Status.NOT_FOUND );
 		}
 
-		//Check if the password is correct
-		if( !user.getPassword().equals( password)) {
-			Log.info("Password is incorrect.");
-			throw new WebApplicationException( Status.FORBIDDEN );
+		if(!user.getPassword().equals(password)) {
+			throwWebAppException(Log, "Password is incorrect.", type, Status.FORBIDDEN );
 		}
 
 		return user;
@@ -82,25 +89,19 @@ public class UsersResource implements RestUsers {
 	public User updateUser(String userId, String password, User user) {
 		Log.info("updateUser : user = " + userId + "; pwd = " + password + " ; user = " + user);
 
-		// Check if user is valid, if not return HTTP CONFLICT (409)
 		if(userId == null || password == null) {
-			Log.info("UserId or passwrod null.");
-			throw new WebApplicationException( Status.CONFLICT );
+			throwWebAppException(Log, "UserId or passwrod null.", type, Status.BAD_REQUEST );
 		}
 
 		synchronized ( this ) {
 			User oldUser = users.get(userId);
 
-			// Check if user exists
 			if( oldUser == null ) {
-				Log.info("User does not exist.");
-				throw new WebApplicationException( Status.NOT_FOUND );
+				throwWebAppException(Log, "User does not exist.", type, Status.NOT_FOUND );
 			}
 
-			//Check if the password is correct
 			if( !oldUser.getPassword().equals( password)) {
-				Log.info("Password is incorrect.");
-				throw new WebApplicationException( Status.FORBIDDEN );
+				throwWebAppException(Log, "Password is incorrect.", type, Status.FORBIDDEN );
 			}
 
 			users.put(userId, new User(userId, user.getFullName(), user.getEmail(), user.getPassword()));
@@ -114,26 +115,21 @@ public class UsersResource implements RestUsers {
 	public User deleteUser(String userId, String password) {
 		Log.info("deleteUser : user = " + userId + "; pwd = " + password);
 
-		// Check if user is valid, if not return HTTP CONFLICT (409)
 		if(userId == null || password == null) {
-			Log.info("UserId or password null.");
-			throw new WebApplicationException( Status.CONFLICT );
+			throwWebAppException(Log, "UserId or passwrod null.", type, Status.BAD_REQUEST );
 		}
 
 		synchronized ( this ) {
 			User user = users.get(userId);
 
-			// Check if user exists
-			if (user == null) {
-				Log.info("User does not exist.");
-				throw new WebApplicationException(Status.NOT_FOUND);
+			if( user == null ) {
+				throwWebAppException(Log, "User does not exist.", type, Status.NOT_FOUND );
 			}
 
-			//Check if the password is correct
-			if (!user.getPassword().equals(password)) {
-				Log.info("Password is incorrect.");
-				throw new WebApplicationException(Status.FORBIDDEN);
+			if( !user.getPassword().equals( password)) {
+				throwWebAppException(Log, "Password is incorrect.", type, Status.FORBIDDEN );
 			}
+
 
 			return users.remove(userId);
 		}

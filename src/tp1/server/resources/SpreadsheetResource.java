@@ -18,7 +18,7 @@ public class SpreadsheetResource implements RestSpreadsheets {
 
 	private final Map<String, Spreadsheet> spreadsheets = new HashMap<>();
 
-	private final RestUsers users = new UsersResource();
+	private final RestUsers users = null;
 
 	private static Logger Log = Logger.getLogger(SpreadsheetResource.class.getName());
 
@@ -72,7 +72,7 @@ public class SpreadsheetResource implements RestSpreadsheets {
 
 			if (ownerId.equals(userId)
 				|| (sheet.getSharedWith().contains(userId)
-					&& sheet.getOwnerDomain().equals(requestUser.getDomain())))
+					&& sheet.getOwnerDomain().equals(requestUser.extractDomain())))
 				return sheet;
 
 			Log.info("User '" + userId + "' does not have permissions to read this spreadsheet.");
