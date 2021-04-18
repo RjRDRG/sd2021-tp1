@@ -1,4 +1,4 @@
-package tp1.clients;
+package tp1.restclients;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -15,16 +15,16 @@ import tp1.server.UsersRestServer;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class DeleteUserClient {
+public class GetUserClient {
 
 	public static void main(String[] args) throws IOException {
 		
 		if( args.length != 2) {
-			System.err.println( "Use: java sd2021.aula2.clients.DeleteUserClient userId password");
+			System.err.println( "Use: java sd2021.aula2.clients.GetUserClient userId password");
 			return;
 		}
 
-		Discovery discovery = new Discovery( "DeleteUserClient", "http://" + InetAddress.getLocalHost().getHostAddress());
+		Discovery discovery = new Discovery( "GetUserClient", "http://" + InetAddress.getLocalHost().getHostAddress());
 		discovery.startCollectingAnnouncements();
 
 		String serverUrl = discovery.knownUrisOf(UsersRestServer.SERVICE).iterator().next().toString();
@@ -40,7 +40,7 @@ public class DeleteUserClient {
 		
 		Response r = target.path( userId).queryParam("password", password).request()
 				.accept(MediaType.APPLICATION_JSON)
-				.delete();
+				.get();
 
 		if( r.getStatus() == Status.OK.getStatusCode() && r.hasEntity() ) {
 			System.out.println("Success:");

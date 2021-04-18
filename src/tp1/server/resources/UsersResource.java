@@ -1,6 +1,7 @@
 package tp1.server.resources;
 
 import jakarta.inject.Singleton;
+import jakarta.jws.WebService;
 import jakarta.ws.rs.core.Response.Status;
 import tp1.api.User;
 import tp1.api.service.rest.RestUsers;
@@ -16,12 +17,11 @@ import java.util.stream.Collectors;
 
 import static tp1.util.ExceptionMapper.*;
 
-/*
 @WebService(
 		serviceName = SoapUsers.NAME,
 		targetNamespace = SoapUsers.NAMESPACE,
 		endpointInterface = SoapUsers.INTERFACE
-)*/
+)
 @Singleton
 public class UsersResource implements RestUsers, SoapUsers {
 
