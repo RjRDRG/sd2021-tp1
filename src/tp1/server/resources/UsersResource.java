@@ -70,6 +70,7 @@ public class UsersResource implements RestUsers, SoapUsers {
 		if(userId == null || password == null) {
 			throwWebAppException(Log, "UserId or passwrod null.", type, Status.BAD_REQUEST);
 		}
+		
 
 		User user = users.get(userId);
 

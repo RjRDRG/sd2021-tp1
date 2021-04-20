@@ -122,6 +122,7 @@ public class SpreadsheetResource implements RestSpreadsheets {
 			throwWebAppException(Log, "Sheet doesnt exist.", type, Response.Status.NOT_FOUND);
 		}
 
+
 		if (!sheet.getSharedWith().contains(userId)) {
 			throwWebAppException(Log, "User " + userId + " does not have permissions to read this spreadsheet.", type, Response.Status.BAD_REQUEST);
 		}
