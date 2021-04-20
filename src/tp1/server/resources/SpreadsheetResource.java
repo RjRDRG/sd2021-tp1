@@ -122,7 +122,6 @@ public class SpreadsheetResource implements RestSpreadsheets {
 			throwWebAppException(Log, "Sheet doesnt exist.", type, Response.Status.NOT_FOUND);
 		}
 
-
 		if (!sheet.getSharedWith().contains(userId)) {
 			throwWebAppException(Log, "User " + userId + " does not have permissions to read this spreadsheet.", type, Response.Status.BAD_REQUEST);
 		}
@@ -182,6 +181,7 @@ public class SpreadsheetResource implements RestSpreadsheets {
 
 	}
 
+
 	@Override
 	public void shareSpreadsheet(String sheetId, String userId, String password) {
 
@@ -219,10 +219,10 @@ public class SpreadsheetResource implements RestSpreadsheets {
 
 			Set<String> sharedWith = sheet.getSharedWith();
 
-			if (!sharedWith.contains(userId)) {
-				Log.info("Spreadsheet is already being shared with this user.");
-				throw new WebApplicationException(Response.Status.NOT_FOUND);
-			}
+			
+			if (!sharedWith.contains(userId))
+				throwWebAppException(Log, "User " + userId + " is not sharing this spreadsheet therefore it cannot be unshared.",
+						type, Response.Status.NOT_FOUND);
 
 			sharedWith.remove(userId);
 		}
