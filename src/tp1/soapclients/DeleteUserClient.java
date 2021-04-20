@@ -12,7 +12,7 @@ import jakarta.xml.ws.Service;
 import jakarta.xml.ws.WebServiceException;
 import tp1.api.User;
 import tp1.api.service.soap.SoapUsers;
-import tp1.api.service.soap.UsersException;
+import tp1.api.service.soap.SoapException;
 
 public class DeleteUserClient {
 
@@ -62,7 +62,7 @@ public class DeleteUserClient {
 				User u = users.deleteUser(userId, password);
 				System.out.println("Delete user: " + u.getUserId());
 				success = true;
-			} catch (UsersException e) {
+			} catch (SoapException e) {
 				System.out.println("Cound not delete user: " + e.getMessage());
 				success = true;
 			} catch (WebServiceException wse) {

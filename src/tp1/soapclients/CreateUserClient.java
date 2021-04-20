@@ -12,7 +12,7 @@ import jakarta.xml.ws.Service;
 import jakarta.xml.ws.WebServiceException;
 import tp1.api.User;
 import tp1.api.service.soap.SoapUsers;
-import tp1.api.service.soap.UsersException;
+import tp1.api.service.soap.SoapException;
 
 public class CreateUserClient {
 
@@ -68,7 +68,7 @@ public class CreateUserClient {
 				id = users.createUser(u);
 				System.out.println("Created user with id: " + id);
 				success = true;
-			} catch (UsersException e) {
+			} catch (SoapException e) {
 				System.out.println("Cound not create user: " + e.getMessage());
 				success = true;
 			} catch (WebServiceException wse) {

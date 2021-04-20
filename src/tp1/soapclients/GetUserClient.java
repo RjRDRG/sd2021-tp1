@@ -12,7 +12,7 @@ import jakarta.xml.ws.Service;
 import jakarta.xml.ws.WebServiceException;
 import tp1.api.User;
 import tp1.api.service.soap.SoapUsers;
-import tp1.api.service.soap.UsersException;
+import tp1.api.service.soap.SoapException;
 
 public class GetUserClient {
 
@@ -63,7 +63,7 @@ public class GetUserClient {
 				System.out.println("User information: " + u.toString());
 				success = true;
 
-			} catch (UsersException e) {
+			} catch (SoapException e) {
 				System.out.println("Cound not get user: " + e.getMessage());
 				success = true;
 			} catch (WebServiceException wse) {

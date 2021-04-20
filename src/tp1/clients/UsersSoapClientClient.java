@@ -1,12 +1,13 @@
 package tp1.clients;
 
 import com.sun.xml.ws.client.BindingProviderProperties;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
-import jakarta.xml.ws.WebServiceException;
 import tp1.api.User;
 import tp1.api.service.soap.SoapUsers;
-import tp1.api.service.soap.UsersException;
+import tp1.api.service.soap.SoapException;
 
 import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
@@ -14,7 +15,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class UsersSoapClient implements UsersApi{
+public class UsersSoapClientClient implements UsersApiClient {
 
     public final static String USERS_WSDL = "/users/?wsdl";
 
@@ -25,7 +26,7 @@ public class UsersSoapClient implements UsersApi{
 
     public final SoapUsers target;
 
-    public UsersSoapClient(String serverUrl) throws MalformedURLException {
+    public UsersSoapClientClient(String serverUrl) throws MalformedURLException {
         QName QNAME = new QName(SoapUsers.NAMESPACE, SoapUsers.NAME);
         Service service = Service.create( new URL(serverUrl + USERS_WSDL), QNAME );
         target = service.getPort( SoapUsers.class );
@@ -34,8 +35,8 @@ public class UsersSoapClient implements UsersApi{
         ((BindingProvider) target).getRequestContext().put(BindingProviderProperties.REQUEST_TIMEOUT, REPLY_TIMEOUT);
     }
 
-    private <T> T retry(Supplier<T> supplier) throws UsersException {
-        UsersException exception;
+    private <T> T retry(Supplier<T> supplier) throws SoapException {
+        SoapException exception;
 
         int retries=0;
         do {
@@ -44,7 +45,7 @@ public class UsersSoapClient implements UsersApi{
             try {
                 return supplier.get();
             } catch (Exception e) {
-                exception = new UsersException(e.getMessage());
+                exception = new SoapException(e.getMessage());
             }
 
             try { Thread.sleep(RETRY_PERIOD); } catch (InterruptedException ignored) {}
@@ -55,27 +56,42 @@ public class UsersSoapClient implements UsersApi{
     }
 
     @Override
-    public String createUser(User user) throws UsersException {
+    public String createUser(User user) throws SoapException {
         return retry( () -> target.createUser(user) );
     }
 
     @Override
-    public User getUser(String userId, String password) throws UsersException {
+    public Boolean verifyUser(String userId, String password) {
+        return retry( () -> {
+            try {
+                target.getUser(userId, password);
+                return true;
+            } catch (Exception exception) {
+                if(exception.getMessage().contains("not exist"))
+                    return false;
+                else
+                    throw exception;
+            }
+        });
+    }
+
+    @Override
+    public User getUser(String userId, String password) throws SoapException {
         return retry( () -> target.getUser(userId, password) );
     }
 
     @Override
-    public User updateUser(String userId, String password, User user) throws UsersException {
+    public User updateUser(String userId, String password, User user) throws SoapException {
         return retry( () -> target.updateUser(userId, password, user) );
     }
 
     @Override
-    public User deleteUser(String userId, String password) throws UsersException {
+    public User deleteUser(String userId, String password) throws SoapException {
         return retry( () -> target.deleteUser(userId, password) );
     }
 
     @Override
-    public List<User> searchUsers(String pattern) throws UsersException {
+    public List<User> searchUsers(String pattern) throws SoapException {
         return retry( () -> target.searchUsers(pattern) );
     }
 }

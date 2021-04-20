@@ -1,7 +1,7 @@
 package tp1.util;
 
 import jakarta.ws.rs.WebApplicationException;
-import tp1.api.service.soap.UsersException;
+import tp1.api.service.soap.SoapException;
 import tp1.server.WebServiceType;
 import jakarta.ws.rs.core.Response.Status;
 
@@ -15,7 +15,7 @@ public class ExceptionMapper {
         Log.info(msg);
 
         if(type == SOAP)
-            throw new UsersException(msg);
+            throw new SoapException(msg);
         else
             throw new WebApplicationException(status);
     }

@@ -14,16 +14,16 @@ public interface SoapUsers {
 	static final String INTERFACE = "tp1.api.service.soap.SoapUsers";
 
 	@WebMethod
-	String createUser(User user) throws UsersException;
+	String createUser(User user) throws SoapException;
 	
 	/**
 	 * Obtains the information on the user identified by name.
 	 * @param userId the userId of the user
 	 * @param password password of the user
-	 * @throws UsersException otherwise
+	 * @throws SoapException otherwise
 	 */
 	@WebMethod
-	User getUser(String userId, String password) throws UsersException;
+	User getUser(String userId, String password) throws SoapException;
 	
 	/**
 	 * Modifies the information of a user. Values of null in any field of the user will be 
@@ -31,27 +31,27 @@ public interface SoapUsers {
 	 * @param userId the userId of the user
 	 * @param password password of the user
 	 * @param user Updated information
-	 * @throws UsersException otherwise
+	 * @throws SoapException otherwise
 	 */
 	@WebMethod
-	User updateUser(String userId, String password, User user) throws UsersException;
+	User updateUser(String userId, String password, User user) throws SoapException;
 	
 	/**
 	 * Deletes the user identified by userId. The spreadsheets owned by the user should be eventually removed (asynchronous
 	 * deletion is ok).
 	 * @param nauserId the userId of the user
 	 * @param password password of the user
-	 * @throws UsersException otherwise
+	 * @throws SoapException otherwise
 	 */
 	@WebMethod
-	User deleteUser(String userId, String password) throws UsersException;
+	User deleteUser(String userId, String password) throws SoapException;
 	
 	/**
 	 * Returns the list of users for which the pattern is a substring of the name (of the user), case-insensitive.
 	 * The password of the users returned by the query must be set to the empty string "".
 	 * @param pattern substring to search
-	 * @throws UsersException otherwise
+	 * @throws SoapException otherwise
 	 */
 	@WebMethod
-	List<User> searchUsers(String pattern) throws UsersException;
+	List<User> searchUsers(String pattern) throws SoapException;
 }

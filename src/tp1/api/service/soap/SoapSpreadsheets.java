@@ -3,6 +3,8 @@ package tp1.api.service.soap;
 import jakarta.jws.WebService;
 import tp1.api.Spreadsheet;
 
+//TODO: String[][] getReferencedSpreadsheetValues(String sheetId, String userId);
+
 @WebService(serviceName=SoapSpreadsheets.NAME, targetNamespace=SoapSpreadsheets.NAMESPACE, endpointInterface=SoapSpreadsheets.INTERFACE)
 public interface SoapSpreadsheets {
 	

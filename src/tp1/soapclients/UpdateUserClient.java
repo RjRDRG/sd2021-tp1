@@ -12,7 +12,7 @@ import jakarta.xml.ws.Service;
 import jakarta.xml.ws.WebServiceException;
 import tp1.api.User;
 import tp1.api.service.soap.SoapUsers;
-import tp1.api.service.soap.UsersException;
+import tp1.api.service.soap.SoapException;
 
 
 public class UpdateUserClient {
@@ -68,7 +68,7 @@ public class UpdateUserClient {
 				User u2 = users.updateUser(userId, oldpwd, u);
 				System.out.println("Successfully updated information for user " + u2.getUserId());
 				success = true;
-			} catch (UsersException e) {
+			} catch (SoapException e) {
 				System.out.println("Cound not update user: " + e.getMessage());
 				success = true;
 			} catch (WebServiceException wse) {

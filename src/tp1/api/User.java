@@ -101,8 +101,8 @@ public class User {
 				+ "]";
 	}
 
-	public String extractDomain() {
-		return userId.split("@")[1];
+	public static String extractDomain(String id) {
+		return id.split("@")[1];
 	}
 	
 	

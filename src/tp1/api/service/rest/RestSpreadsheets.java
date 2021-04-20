@@ -12,6 +12,8 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import tp1.api.Spreadsheet;
 
+//TODO: String[][] getReferencedSpreadsheetValues(String sheetId, String userId);
+
 
 @Path(RestSpreadsheets.PATH)
 public interface RestSpreadsheets {
