@@ -29,15 +29,26 @@ public class Spreadsheet implements AbstractSpreadsheet {
 	public Spreadsheet() {	
 	}
 
-	public Spreadsheet(String sheetId, String owner, String sheetURL, int lines, int columns, Set<String> sharedWith, String[][] rawValues) {
+	public Spreadsheet(String sheetId, String owner, String sheetURL, int rows, int columns, Set<String> sharedWith, String[][] rawValues) {
 		super();
 		this.sheetId = sheetId;
 		this.owner = owner;
 		this.sheetURL = sheetURL;
-		this.rows = lines;
+		this.rows = rows;
 		this.columns = columns;
 		this.sharedWith = sharedWith;
 		this.rawValues = rawValues;
+	}
+
+	public Spreadsheet(Spreadsheet s, String sheetId, String domainId) {
+		super();
+		this.sheetId = sheetId;
+		this.owner = s.owner;
+		this.sheetURL = domainId+"#id#"+sheetId;
+		this.rows = s.rows;
+		this.columns = s.columns;
+		this.sharedWith = s.sharedWith;
+		this.rawValues = s.rawValues;
 	}
 
 	public String getSheetId() {
@@ -112,7 +123,7 @@ public class Spreadsheet implements AbstractSpreadsheet {
 	 * @param cell  - the cell being updated.
 	 * @param value the new raw value.
 	 */
-	public void setCellRawValue(String cell, String value) {
+	public void placeCellRawValue(String cell, String value) {
 		var r = new CellRange( cell + ":A1");
 		rawValues[r.topRow][ r.topCol] = value;
 	}
@@ -124,7 +135,7 @@ public class Spreadsheet implements AbstractSpreadsheet {
 	 * @param value the new raw value.
 	 */
 	@Deprecated
-	public void setCellRawValue(int row, int col, String value) {
+	public void placeCellRawValue(int row, int col, String value) {
 		rawValues[row][ col] = value;
 	}
 	
@@ -134,11 +145,11 @@ public class Spreadsheet implements AbstractSpreadsheet {
 	 * @param col - the column index.
 	 * @return the raw value of the cell.
 	 */
-	public String getCellRawValue(int row, int col) {
+	public String extractCellRawValue(int row, int col) {
 		return rawValues[row][col];
 	}
 
-	public String getOwnerDomain() {
+	public String extractOwnerDomain() {
 		return owner.split("@")[1];
 	}
 
@@ -163,10 +174,14 @@ public class Spreadsheet implements AbstractSpreadsheet {
 	}
 
 	@Override
-	public String[][] getRangeValues(String sheetURL, String range) {
+	public String[][] rangeValues(String sheetURL, String range) {
 		try {
-			return SpreadsheetResource.remoteSpreadsheetClients.get(sheetURL).getReferencedSpreadsheetValues(sheetId, owner);
+			String[] parts = sheetURL.split("#id#");
+			String domainId = parts[0];
+			String otherSheetId = parts[1];
+			return SpreadsheetResource.getRemoteSpreadsheetClient(domainId).getReferencedSpreadsheetValues(otherSheetId, owner, range);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

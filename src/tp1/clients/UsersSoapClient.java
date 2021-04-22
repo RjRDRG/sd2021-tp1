@@ -5,6 +5,7 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
+import jakarta.xml.ws.WebServiceException;
 import tp1.api.User;
 import tp1.api.service.soap.SoapUsers;
 import tp1.api.service.soap.SoapException;
@@ -15,7 +16,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class UsersSoapClientClient implements UsersApiClient {
+public class UsersSoapClient implements UsersApiClient {
 
     public final static String USERS_WSDL = "/users/?wsdl";
 
@@ -26,7 +27,7 @@ public class UsersSoapClientClient implements UsersApiClient {
 
     public final SoapUsers target;
 
-    public UsersSoapClientClient(String serverUrl) throws MalformedURLException {
+    public UsersSoapClient(String serverUrl) throws MalformedURLException {
         QName QNAME = new QName(SoapUsers.NAMESPACE, SoapUsers.NAME);
         Service service = Service.create( new URL(serverUrl + USERS_WSDL), QNAME );
         target = service.getPort( SoapUsers.class );
@@ -44,6 +45,9 @@ public class UsersSoapClientClient implements UsersApiClient {
 
             try {
                 return supplier.get();
+            } catch (SoapException e) {
+                exception = new SoapException(e.getMessage());
+                break;
             } catch (Exception e) {
                 exception = new SoapException(e.getMessage());
             }

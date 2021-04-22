@@ -16,13 +16,13 @@ import tp1.server.resources.UsersResource;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class UsersRestClientClient implements UsersApiClient {
+public class UsersRestClient implements UsersApiClient {
 
     private static Logger Log = Logger.getLogger(UsersResource.class.getName());
 
     private final WebTarget target;
 
-    public UsersRestClientClient(String serverUrl) {
+    public UsersRestClient(String serverUrl) {
         ClientConfig config = new ClientConfig();
         Client client = ClientBuilder.newClient(config);
         target = client.target(serverUrl).path( RestUsers.PATH );

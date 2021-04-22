@@ -35,10 +35,11 @@ public class Discovery {
 	static final int DISCOVERY_PERIOD = 1000;
 	static final int DISCOVERY_TIMEOUT = 5000;
 
-	// Used separate the two fields that make up a service announcement.
-	private static final String DELIMITER = "\t";
+	private static final String URI_DELIMITER = "\t";
+	private static final String DOMAIN_DELIMITER = ":";
 
 	private InetSocketAddress addr;
+	private String domainId;
 	private String serviceName;
 	private String serviceURI;
 	private Map<String, Set<URI>> servers;
@@ -49,8 +50,9 @@ public class Discovery {
 	 * @param  serviceName the name of the service to announce
 	 * @param  serviceURI an uri string - representing the contact endpoint of the service being announced
 	 */
-	public Discovery(InetSocketAddress addr, String serviceName, String serviceURI) {
+	public Discovery(InetSocketAddress addr, String domainId, String serviceName, String serviceURI) {
 		this.addr = addr;
+		this.domainId = domainId;
 		this.serviceName = serviceName;
 		this.serviceURI  = serviceURI;
 		this.servers = new HashMap<String, Set<URI>>();
@@ -62,8 +64,8 @@ public class Discovery {
 	 * @param  serviceName the name of the service to announce
 	 * @param  serviceURI an uri string - representing the contact endpoint of the service being announced
 	 */
-	public Discovery(String serviceName, String serviceURI) {
-		this(DISCOVERY_ADDR, serviceName, serviceURI);
+	public Discovery(String domainId, String serviceName, String serviceURI) {
+		this(DISCOVERY_ADDR, domainId, serviceName, serviceURI);
 	}
 	
 	/**
@@ -71,8 +73,8 @@ public class Discovery {
 	 */
 	public void startSendingAnnouncements() {
 		Log.info(String.format("Starting Discovery announcements on: %s for: %s -> %s\n", addr, serviceName, serviceURI));
-		
-		byte[] announceBytes = String.format("%s%s%s", serviceName, DELIMITER, serviceURI).getBytes();
+
+		byte[] announceBytes = (domainId+ DOMAIN_DELIMITER +serviceName+ URI_DELIMITER +serviceURI).getBytes();
 		DatagramPacket announcePkt = new DatagramPacket(announceBytes, announceBytes.length, addr);
 
 		try {
@@ -117,7 +119,7 @@ public class Discovery {
 						ms.receive(pkt);
 
 						String msg = new String( pkt.getData(), 0, pkt.getLength());
-						String[] msgElems = msg.split(DELIMITER);
+						String[] msgElems = msg.split(URI_DELIMITER);
 
 						if( msgElems.length == 2) {	//periodic announcement
 							System.out.printf( "FROM %s (%s) : %s\n", pkt.getAddress().getCanonicalHostName(),
@@ -148,20 +150,7 @@ public class Discovery {
 	 * @return an array of URI with the service instances discovered. 
 	 * 
 	 */
-	public Set<URI> knownUrisOf(String serviceName) {
-		try {
-			Thread.sleep(DISCOVERY_TIMEOUT);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		return servers.get(serviceName);
-	}	
-	
-	// Main just for testing purposes
-	public static void main( String[] args) throws Exception {
-		Discovery discovery = new Discovery( DISCOVERY_ADDR, "test", "http://" + InetAddress.getLocalHost().getHostAddress());
-		discovery.startSendingAnnouncements();
-		discovery.startCollectingAnnouncements();
+	public Set<URI> knownUrisOf(String domain, String service) {
+		return servers.get(domain+DOMAIN_DELIMITER+serviceName);
 	}
 }

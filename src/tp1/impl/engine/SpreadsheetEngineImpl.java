@@ -88,34 +88,25 @@ public class SpreadsheetEngineImpl implements SpreadsheetEngine {
 	
 	static void setCell( AbstractSpreadsheet sheet, ExcelWorksheet worksheet, ExcelCell cell, String rawVal ) {
 		CellType type = parseRawValue( rawVal );
-		
-		switch( type ) {
-		case BOOLEAN:
-				cell.setValue( Boolean.parseBoolean( rawVal ));
-			break;
-		case NUMBER:
-				cell.setValue( Double.parseDouble(rawVal));
-			break;
-		case FORMULA:
-				cell.setFormula(rawVal);
-			break;
-		case TEXT:
-		case EMPTY:
-			cell.setValue(rawVal);
-		break;
-		case IMPORTRANGE:
-			var matcher = IMPORTRANGE_PATTERN.matcher(rawVal);
-			if( matcher.matches()) {
-				var sheetUrl = matcher.group(1);
-				var range = matcher.group(2);
-				var values = sheet.getRangeValues(sheetUrl, range);
-				if( values != null )
-					applyRange( worksheet, cell, new CellRange(range), values);
-				else
-					cell.setValue(ERROR);
+
+		switch (type) {
+			case BOOLEAN -> cell.setValue(Boolean.parseBoolean(rawVal));
+			case NUMBER -> cell.setValue(Double.parseDouble(rawVal));
+			case FORMULA -> cell.setFormula(rawVal);
+			case TEXT, EMPTY -> cell.setValue(rawVal);
+			case IMPORTRANGE -> {
+				var matcher = IMPORTRANGE_PATTERN.matcher(rawVal);
+				if (matcher.matches()) {
+					var sheetUrl = matcher.group(1);
+					var range = matcher.group(2);
+					var values = sheet.rangeValues(sheetUrl, range);
+					if (values != null)
+						applyRange(worksheet, cell, new CellRange(range), values);
+					else
+						cell.setValue(ERROR);
+				}
 			}
-			break;
-		};
+		}
 	}
 	
 	

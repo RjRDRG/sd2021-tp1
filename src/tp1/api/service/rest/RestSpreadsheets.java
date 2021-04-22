@@ -12,8 +12,6 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import tp1.api.Spreadsheet;
 
-//TODO: String[][] getReferencedSpreadsheetValues(String sheetId, String userId);
-
 
 @Path(RestSpreadsheets.PATH)
 public interface RestSpreadsheets {
@@ -50,13 +48,14 @@ public interface RestSpreadsheets {
 	@Path("/{sheetId}")
 	void deleteSpreadsheet(@PathParam("sheetId") String sheetId, @QueryParam("password") String password);
 
+
 	/**
 	 * Retrieve a spreadsheet.
-	 * 	
+	 *
 	 * @param sheetId - The  spreadsheet being retrieved.
 	 * @param userId - The user performing the operation.
 	 * @param password - The password of the user performing the operation.
-	 * 
+	 *
 	 * @return 200 and the spreadsheet
 	 *		   404 if no sheet exists with the given sheetId, or the userId does not exist.
 	 *         403 if the password is incorrect.
@@ -65,8 +64,8 @@ public interface RestSpreadsheets {
 	@GET
 	@Path("/{sheetId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Spreadsheet getSpreadsheet(@PathParam("sheetId") String sheetId , @QueryParam("userId") String userId, 
-			@QueryParam("password") String password);
+	Spreadsheet getSpreadsheet(@PathParam("sheetId") String sheetId , @QueryParam("userId") String userId,
+							   @QueryParam("password") String password);
 		
 	
 	/**
@@ -86,6 +85,22 @@ public interface RestSpreadsheets {
 	String[][] getSpreadsheetValues(@PathParam("sheetId") String sheetId, 
 			@QueryParam("userId") String userId, @QueryParam("password") String password);
 
+
+	/**
+	 * Retrieve a spreadsheet.
+	 *
+	 * @param sheetId - The  spreadsheet being retrieved.
+	 * @param userId - The user performing the operation.
+	 *
+	 * @return 200 and the spreadsheet
+	 *		   404 if no sheet exists with the given sheetId, or the userId does not exist.
+	 *         403 if the password is incorrect.
+	 * 		   400 otherwise
+	 */
+	@GET
+	@Path("/reference/{sheetId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	String[][] getReferencedSpreadsheetValues(@PathParam("sheetId") String sheetId , @QueryParam("userId") String userId, @QueryParam("range") String range);
 
 	/**
 	 * Updates the raw values of some cells of a spreadsheet. 

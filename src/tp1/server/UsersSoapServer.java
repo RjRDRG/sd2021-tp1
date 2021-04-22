@@ -2,12 +2,15 @@ package tp1.server;
 
 import com.sun.net.httpserver.HttpServer;
 import jakarta.xml.ws.Endpoint;
+import tp1.discovery.Discovery;
 import tp1.server.resources.UsersResource;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+
+import static tp1.clients.UsersApiClient.SERVICE;
 
 public class UsersSoapServer {
 
@@ -19,7 +22,6 @@ public class UsersSoapServer {
     }
 
     public static final int PORT = 8080;
-    public static final String SERVICE = "UsersService";
     public static final String SOAP_USERS_PATH = "/soap/users";
 
     public static void main(String[] args) {
@@ -35,6 +37,10 @@ public class UsersSoapServer {
             Endpoint soapUsersEndpoint = Endpoint.create(new UsersResource(domain, WebServiceType.SOAP));
             soapUsersEndpoint.publish(server.createContext (SOAP_USERS_PATH));
             server.start();
+
+            Discovery discovery = new Discovery(  domain, SERVICE, serverURI);
+            discovery.startSendingAnnouncements();
+
             Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
         } catch( Exception e) {
             Log.severe(e.getMessage());

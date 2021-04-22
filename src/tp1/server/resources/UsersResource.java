@@ -35,8 +35,6 @@ public class UsersResource implements RestUsers, SoapUsers {
 	public UsersResource(String domainId, WebServiceType type) {
 		this.domainId = domainId;
 		this.type = type;
-
-		System.out.println(domainId);
 	}
 
 	@Override

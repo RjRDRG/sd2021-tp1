@@ -4,6 +4,8 @@ import tp1.api.Spreadsheet;
 
 public interface SpreadsheetApiClient {
 
+    String SERVICE = "SpreadsheetsService";
+
     String createSpreadsheet(Spreadsheet sheet, String password );
 
     void deleteSpreadsheet(String sheetId, String password);
@@ -12,7 +14,7 @@ public interface SpreadsheetApiClient {
 
     String[][] getSpreadsheetValues(String sheetId, String userId, String password);
 
-    String[][] getReferencedSpreadsheetValues(String sheetId, String userId);
+    String[][] getReferencedSpreadsheetValues(String sheetId, String userId, String range);
 
     void updateCell( String sheetId, String cell, String rawValue, String userId, String password);
 
@@ -20,5 +22,3 @@ public interface SpreadsheetApiClient {
 
     void unshareSpreadsheet( String sheetId, String userId,  String password);
 }
-
-//TODO: implement rest and soap clients

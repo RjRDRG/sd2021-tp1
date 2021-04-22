@@ -10,6 +10,8 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.util.logging.Logger;
 
+import static tp1.clients.UsersApiClient.SERVICE;
+
 public class UsersRestServer {
 
 	private static Logger Log = Logger.getLogger(UsersRestServer.class.getName());
@@ -20,7 +22,6 @@ public class UsersRestServer {
 	}
 	
 	public static final int PORT = 8080;
-	public static final String SERVICE = "UsersService";
 	
 	public static void main(String[] args) {
 		try {
@@ -34,7 +35,7 @@ public class UsersRestServer {
 			String serverURI = String.format("http://%s:%s/rest", ip, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
 
-			Discovery discovery = new Discovery( SERVICE, serverURI);
+			Discovery discovery = new Discovery(  domain, SERVICE, serverURI);
 			discovery.startSendingAnnouncements();
 
 			Log.info(String.format("%s Server ready @ %s\n",  SERVICE, serverURI));

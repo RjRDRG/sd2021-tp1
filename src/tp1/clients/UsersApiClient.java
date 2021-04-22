@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface UsersApiClient {
 
+    String SERVICE = "UsersService";
+
     String createUser(User user);
 
     Boolean verifyUser (String userId, String password);

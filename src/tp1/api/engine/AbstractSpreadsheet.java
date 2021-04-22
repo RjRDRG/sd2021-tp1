@@ -37,5 +37,5 @@ public interface AbstractSpreadsheet {
 	 * @param range - the range of cells covered by the formula
 	 * @return the computed values.
 	 */
-	String[][] getRangeValues(String sheetURL, String range);
+	String[][] rangeValues(String sheetURL, String range);
 }
